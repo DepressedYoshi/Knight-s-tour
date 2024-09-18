@@ -103,9 +103,16 @@ public class KnightTourController {
     }
 
     public void draw() {
+        Color color;
         for (int i = 0; i < NUM_ROWS; i++) {
             for (int j = 0; j < NUM_COLS; j++) {
-                Color color = Color.BURLYWOOD;
+                Location me = new Location(i,j);
+                Location target = app.getCurrentLoc();
+                if (target != null && target.equals(me))
+                    color = Color.CYAN;
+                else
+                    color = Color.BURLYWOOD;
+
                 drawSingleSquare(50+j*SIZE , 10+i*SIZE, SIZE, 2, color);
             }
         }
