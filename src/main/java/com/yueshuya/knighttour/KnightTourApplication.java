@@ -33,8 +33,10 @@ public class KnightTourApplication extends Application {
     }
 
 //M8 - Finding Valid Neighbors
-    private ArrayList<Location> findNeighbor(Location location, int[][] board){
+    public ArrayList<Location> findNeighbor(Location location){
         ArrayList<Location> neighbors = new ArrayList<>();
+        if (location ==null)
+            return neighbors;
         // All possible knight moves
         int[][] moves = {
                 { 2, 1 }, { 2, -1 }, { -2, 1 }, { -2, -1 },
@@ -43,32 +45,36 @@ public class KnightTourApplication extends Application {
         //chekc all knight positon
         for (int[] m :moves){
             Location target = new Location(location.getRow()+m[0], location.getCol()+m[1]);
-            if (isValidLoc(target, board)){
-                neighbors.add(location);
+            if (isValidLoc(target, this.board)){
+                neighbors.add(target);
             }
         }
+        controller.setNeighbor(neighbors);
+        System.out.println(neighbors);
         return neighbors;
     }
+    //M9
 
     private boolean isValidLoc(Location location, int[][] board){
         int x = location.getCol();
         int y = location.getRow();
         boolean notTried = !isInMap(location);
         boolean inBound = x >=0 && x < controller.NUM_COLS && y >=0 && y < controller.NUM_ROWS;
-        boolean notBeenThere = board[y][x] == 0;
-        return  inBound && notBeenThere && notTried;
+//        boolean notBeenThere = board[y][x] == 0;
+        return  inBound && notTried;
     }
 
-//M7
+//M9 - draw
+
 
 
 //M4 - set location color
     public void setCurrentLoc(Location loc) {
         currentLoc = loc;
+        findNeighbor(currentLoc);
     }
     public Location getCurrentLoc() {
         return currentLoc;
-
     }
 //Handle the gui feedback and changes
     @Override

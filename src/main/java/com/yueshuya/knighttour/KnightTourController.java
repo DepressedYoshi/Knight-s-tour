@@ -15,11 +15,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class KnightTourController {
-    public static final int NUM_ROWS = 5;
-    public static final int NUM_COLS = 5;
+    public static final int NUM_ROWS = 8;
+    public static final int NUM_COLS = 8;
     public static final int SIZE = 60;
 
 
@@ -34,6 +35,12 @@ public class KnightTourController {
     private TextField colTextField;
     private Canvas canvas;
     private GraphicsContext gc;
+
+    public void setNeighbor(ArrayList<Location> neighbor) {
+        this.neighbor = neighbor;
+    }
+
+    private ArrayList<Location> neighbor = new ArrayList<>();
 
     public KnightTourController(KnightTourApplication app)
     {
@@ -107,10 +114,12 @@ public class KnightTourController {
         for (int i = 0; i < NUM_ROWS; i++) {
             for (int j = 0; j < NUM_COLS; j++) {
                 Location me = new Location(i,j);
-                Location target = app.getCurrentLoc();
-                if (target != null && target.equals(me))
+                Location currLoc = app.getCurrentLoc();
+                if (currLoc != null && currLoc.equals(me))
                     color = Color.CYAN;
-                else
+                else if (neighbor.contains(me)) {
+                    color = Color.GREEN;
+                } else
                     color = Color.BURLYWOOD;
 
                 drawSingleSquare(50+j*SIZE , 10+i*SIZE, SIZE, 2, color);
