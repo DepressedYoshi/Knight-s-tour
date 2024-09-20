@@ -18,8 +18,8 @@ import javafx.scene.paint.Paint;
 import java.util.Scanner;
 
 public class KnightTourController {
-    public static final int NUM_ROWS = 8;
-    public static final int NUM_COLS = 8;
+    public static final int NUM_ROWS = 5;
+    public static final int NUM_COLS = 5;
     public static final int SIZE = 60;
 
 
