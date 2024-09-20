@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -19,7 +20,7 @@ public class KnightTourApplication extends Application {
     private HashMap<Location, Location> exhaustedList = new HashMap<>();
 
 
-    //M5 - Adding, Deleting and Checking if a Location is in the Exhausted List
+    //M7 - Adding, Deleting and Checking if a Location is in the Exhausted List
     private void addLoc(Location start, Location end){
         exhaustedList.put(start, end);
     }
@@ -31,7 +32,34 @@ public class KnightTourApplication extends Application {
         return exhaustedList.containsKey(loc);
     }
 
+//M8 - Finding Valid Neighbors
+    private ArrayList<Location> findNeighbor(Location location, int[][] board){
+        ArrayList<Location> neighbors = new ArrayList<>();
+        // All possible knight moves
+        int[][] moves = {
+                { 2, 1 }, { 2, -1 }, { -2, 1 }, { -2, -1 },
+                { 1, 2 }, { 1, -2 }, { -1, 2 }, { -1, -2 }
+        };
+        //chekc all knight positon
+        for (int[] m :moves){
+            Location target = new Location(location.getRow()+m[0], location.getCol()+m[1]);
+            if (isValidLoc(target, board)){
+                neighbors.add(location);
+            }
+        }
+        return neighbors;
+    }
 
+    private boolean isValidLoc(Location location, int[][] board){
+        int x = location.getCol();
+        int y = location.getRow();
+        boolean notTried = !isInMap(location);
+        boolean inBound = x >=0 && x < controller.NUM_COLS && y >=0 && y < controller.NUM_ROWS;
+        boolean notBeenThere = board[y][x] == 0;
+        return  inBound && notBeenThere && notTried;
+    }
+
+//M7
 
 
 //M4 - set location color
