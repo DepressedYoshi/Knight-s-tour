@@ -40,6 +40,10 @@ public class KnightTourController {
         this.neighbor = neighbor;
     }
 
+    public ArrayList<Location> getNeighbor() {
+        return neighbor;
+    }
+
     private ArrayList<Location> neighbor = new ArrayList<>();
 
     public KnightTourController(KnightTourApplication app)
@@ -156,6 +160,10 @@ public class KnightTourController {
             else {
                 startButton.setText("Start");
             }
+        }
+        if (actionEvent.getSource() == stepButton){
+            app.move();
+            app.printBoard();
         }
     }
 }
