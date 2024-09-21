@@ -4,6 +4,9 @@ package com.yueshuya.knighttour;
 we are using this file as botht eh contoller and the view
  */
 
+import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
@@ -14,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -35,6 +39,8 @@ public class KnightTourController {
     private TextField colTextField;
     private Canvas canvas;
     private GraphicsContext gc;
+    private AnimationTimer timer;
+
 
     public void setNeighbor(ArrayList<Location> neighbor) {
         this.neighbor = neighbor;
@@ -53,7 +59,23 @@ public class KnightTourController {
 
         createGUI();
         attchListeners();
+
+        setupAnimationTimer();
+
     }
+
+    // Setup timeline for continuous movement
+    private void setupAnimationTimer() {
+        timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                app.move();
+                app.printBoard();
+                draw();
+            }
+        };
+    }
+
 
     public AnchorPane getAnchorPane() {
         return anchorPane;
@@ -146,24 +168,76 @@ public class KnightTourController {
         });
     }
     private void handleButtonClicks(ActionEvent actionEvent) {
-        if(actionEvent.getSource() == startButton) {
-            String buttonText = startButton.getText();
-            if(buttonText.equals("Start")) {
-                if(app.getCurrentLoc() == null) {
-                    int row = Integer.parseInt(rowTextField.getText());
-                    int col = Integer.parseInt(colTextField.getText());
-                    Location loc = new Location(row, col);
-                    app.setCurrentLoc(loc);
-                }
-                startButton.setText("Stop");
-            }
-            else {
-                startButton.setText("Start");
+        if (actionEvent.getSource() == startButton) {
+            if (startButton.getText().equals("Start")) {
+                handleStartButton();
+            } else {
+                handleStopButton();
             }
         }
-        if (actionEvent.getSource() == stepButton){
+
+        if (actionEvent.getSource() == stepButton) {
             app.move();
             app.printBoard();
+            draw();
         }
     }
+
+    //toggle flash mode
+    private void handleStartButton() {
+        String rowText = rowTextField.getText();
+        String colText = colTextField.getText();
+
+        if (isValidInput(rowText, colText)) {
+            int row = Integer.parseInt(rowText);
+            int col = Integer.parseInt(colText);
+
+            if (isValidPosition(row, col)) {
+                Location loc = new Location(row, col);
+                app.setCurrentLoc(loc);
+                startButton.setText("Stop");
+                timer.start();  // Start the AnimationTimer
+            } else {
+                showErrorMessage("Row and column must be between 0 and 7.");
+            }
+        } else {
+            showErrorMessage("Invalid input. Please enter valid integers.");
+        }
+    }
+
+    // stop shit
+    private void handleStopButton() {
+        startButton.setText("Start");
+        timer.stop();
+    }
+
+    // Modularity - maybe more input chekc in the future
+    private boolean isValidInput(String rowText, String colText) {
+        return isValidInteger(rowText) && isValidInteger(colText);
+    }
+
+    // prevent nasty out of bound shit
+    private boolean isValidPosition(int row, int col) {
+        return row >= 0 && row < NUM_ROWS && col >= 0 && col < NUM_COLS;
+    }
+
+    // master debugger
+    private void showErrorMessage(String message) {
+        System.out.println("Error: " + message);  // You can later replace this with UI-based error messaging
+    }
+
+    // did you put in a number
+    private boolean isValidInteger(String input) {
+        if (input == null || input.isEmpty()) {
+            return false;
+        }
+        try {
+            Integer.parseInt(input);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+
 }

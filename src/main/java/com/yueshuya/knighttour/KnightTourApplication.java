@@ -83,7 +83,6 @@ public class KnightTourApplication extends Application {
             board[lastLocation.getRow()][lastLocation.getCol()] = 0;
             move--;
             currentLoc = stack.peek();
-
             findNeighbor(currentLoc);
         }
     }
@@ -127,6 +126,7 @@ public class KnightTourApplication extends Application {
 
     public static void main(String[] args) {
         launch();
+
     }
 
     public void printBoard() {
