@@ -5,10 +5,7 @@ we are using this file as botht eh contoller and the view
  */
 
 import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -17,10 +14,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.util.Duration;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class KnightTourController {
     public static final int NUM_ROWS = 8;
@@ -128,11 +123,11 @@ public class KnightTourController {
         anchorPane.getChildren().add(stepButton);
     }
 
-    private void drawSingleSquare(int x, int y, int size, int stroke, Paint color) {
+    private void drawSingleSquare(int x, int y, Paint color) {
         gc.setFill(Color.GOLDENROD);
-        gc.fillRect(x, y, size, size);
+        gc.fillRect(x, y, KnightTourController.SIZE, KnightTourController.SIZE);
         gc.setFill(color);
-        gc.fillRect(x+stroke, y+stroke, size-(stroke*2), size-(stroke*2));
+        gc.fillRect(x+ 2, y+ 2, KnightTourController.SIZE -(2 *2), KnightTourController.SIZE -(2 *2));
     }
 
     public void draw() {
@@ -148,24 +143,14 @@ public class KnightTourController {
                 } else
                     color = Color.BURLYWOOD;
 
-                drawSingleSquare(50+j*SIZE , 10+i*SIZE, SIZE, 2, color);
+                drawSingleSquare(50+j*SIZE , 10+i*SIZE, color);
             }
         }
     }
 
     private void attchListeners() {
-        startButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                handleButtonClicks(actionEvent);
-            }
-        });
-        stepButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                handleButtonClicks(actionEvent);
-            }
-        });
+        startButton.setOnAction(this::handleButtonClicks);
+        stepButton.setOnAction(this::handleButtonClicks);
     }
     private void handleButtonClicks(ActionEvent actionEvent) {
         if (actionEvent.getSource() == startButton) {

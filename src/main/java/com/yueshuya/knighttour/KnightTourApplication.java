@@ -11,10 +11,9 @@ import java.util.HashMap;
 import java.util.Stack;
 
 public class KnightTourApplication extends Application {
-    public static final int SIZE = 5;
     private Location currentLoc = null;
     public KnightTourController controller = new KnightTourController(this);
-    private final int[][] board = new int[controller.NUM_ROWS][controller.NUM_COLS];;
+    private final int[][] board = new int[KnightTourController.NUM_ROWS][KnightTourController.NUM_COLS];
     private Stack<Location> stack = new Stack<>();
     private HashMap<Location, Location> exhaustedList = new HashMap<>();
     private int move = 0;
@@ -55,11 +54,11 @@ public class KnightTourApplication extends Application {
     }
 
     //M9
-    private boolean isValidLoc(Location location, int[][] board){
+    private boolean isValidLoc(Location location){
         int x = location.getCol();
         int y = location.getRow();
         boolean notTried = !isInMap(location);
-        boolean inBound = x >=0 && x < controller.NUM_COLS && y >=0 && y < controller.NUM_ROWS;
+        boolean inBound = x >=0 && x < KnightTourController.NUM_COLS && y >=0 && y < KnightTourController.NUM_ROWS;
         return  inBound && notTried;
     }
 
@@ -74,7 +73,7 @@ public class KnightTourApplication extends Application {
             backTrack();
         }
         setCurrentLoc(chooseNextMove());
-        exhaustedList.put(holder, getCurrentLoc());
+        addLoc(holder, getCurrentLoc());
     }
 
     private void backTrack() {
@@ -92,7 +91,7 @@ public class KnightTourApplication extends Application {
         if (controller.getNeighbor().isEmpty()){
             return null;
         }
-       return controller.getNeighbor().get(0);
+       return controller.getNeighbor().getFirst();
     }
 
 
@@ -126,13 +125,12 @@ public class KnightTourApplication extends Application {
 
     public static void main(String[] args) {
         launch();
-
     }
 
     public void printBoard() {
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j <board[0].length; j++) {
-                System.out.print(board[i][j] + "  ");
+        for (int[] ints : board) {
+            for (int j = 0; j < board[0].length; j++) {
+                System.out.print(ints[j] + "  ");
             }
             System.out.println();
         }
