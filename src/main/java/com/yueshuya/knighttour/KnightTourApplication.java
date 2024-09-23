@@ -44,7 +44,7 @@ public class KnightTourApplication extends Application {
         //chekc all knight positon
         for (int[] m :moves){
             Location target = new Location(location.getRow()+m[0], location.getCol()+m[1]);
-            if (isValidLoc(target, this.board) && notBeenThere(target)){
+            if (isValidLoc(target) && notBeenThere(target)){
                 neighbors.add(target);
             }
         }
