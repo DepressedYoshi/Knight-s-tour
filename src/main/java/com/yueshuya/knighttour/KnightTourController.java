@@ -129,6 +129,10 @@ public class KnightTourController {
         gc.setFill(color);
         gc.fillRect(x+ 2, y+ 2, KnightTourController.SIZE -(2 *2), KnightTourController.SIZE -(2 *2));
     }
+    private void drawNumber(int s, int x, int y){
+        gc.setFill(Color.BLACK);
+        gc.fillText(String.valueOf(s), x,y);
+    }
 
     public void draw() {
         Color color;
@@ -142,8 +146,8 @@ public class KnightTourController {
                     color = Color.GREEN;
                 } else
                     color = Color.BURLYWOOD;
-
                 drawSingleSquare(50+j*SIZE , 10+i*SIZE, color);
+
             }
         }
     }
