@@ -16,11 +16,7 @@ public class KnightTourApplication extends Application {
     private final int[][] board = new int[KnightTourController.NUM_ROWS][KnightTourController.NUM_COLS];
     private Stack<Location> stack = new Stack<>();
     private HashMap<Location, ArrayList<Location>> exhaustedList = new HashMap<>();
-//    private int move = 0;
-
     private int attemptMove = 0;
-
-    // M7 - Adding, Deleting, and Checking if a Location is in the Exhausted List
 
     private void addLoc(Location start, Location end) {
         if (isInMap(start)){
@@ -38,13 +34,10 @@ public class KnightTourApplication extends Application {
     private boolean isInMap(Location loc) {
         return exhaustedList.containsKey(loc);
     }
-
-    // M8 - Finding Valid Neighbors
-
-    public ArrayList<Location> findNeighbor(Location location) {
+    public void findNeighbor(Location location) {
         ArrayList<Location> neighbors = new ArrayList<>();
         if (location == null)
-            return neighbors;
+            return;
 
         // All possible knight moves
         int[][] moves = {
@@ -60,7 +53,6 @@ public class KnightTourApplication extends Application {
         }
         removeWrongPath(neighbors, location);
         controller.setNeighbor(neighbors);
-        return neighbors;
     }
     private void removeWrongPath(ArrayList<Location> neighbors, Location currentLoc) {
         if (isInMap(currentLoc)){
@@ -69,10 +61,6 @@ public class KnightTourApplication extends Application {
            }
         }
     }
-
-
-    // M9
-
     private boolean isValidLoc(Location location) {
         int x = location.getCol();
         int y = location.getRow();
@@ -83,9 +71,6 @@ public class KnightTourApplication extends Application {
     private boolean notBeenThere(Location target) {
         return board[target.getRow()][target.getCol()] == 0;
     }
-
-    // Milestone 10 -  Choosing a move, and moving forward
-
     public void move() {
         if (tourComplete()){
             return;
@@ -102,19 +87,17 @@ public class KnightTourApplication extends Application {
         attemptMove ++;
 
     }
-    // Fix the condition for checking if the tour is complete
-
     private boolean tourComplete() {
         return stack.size() >= (KnightTourController.NUM_ROWS * KnightTourController.NUM_COLS);
     }
     private void backTrack() {
         if (!stack.isEmpty()) {
             Location lastLocation = stack.pop();
-            board[lastLocation.getRow()][lastLocation.getCol()] = 0;  // Mark as unvisited
-//            move--;
+            board[lastLocation.getRow()][lastLocation.getCol()] = 0;
             if (!stack.isEmpty()) {
                 currentLoc = stack.peek();
-                findNeighbor(currentLoc);  // Find neighbors again after backtracking
+                // Find neighbors again after backtracking - only remove from map if still no move available after backtracking one step
+                findNeighbor(currentLoc);
                 if (controller.getNeighbor().isEmpty()){
                     removeLoc(currentLoc);
                     backTrack();
@@ -122,16 +105,12 @@ public class KnightTourApplication extends Application {
             }
         }
     }
-
     private Location chooseNextMove() {
         if (controller.getNeighbor().isEmpty()) {
             return null;
         }
-        return controller.getNeighbor().getFirst();  // Fixed to use get(0) instead of getFirst()
+        return controller.getNeighbor().getFirst();
     }
-
-    // M4 - Set location and update the board
-
     public void setCurrentLoc(Location loc) {
         currentLoc = loc;
         stack.push(loc);
@@ -141,8 +120,6 @@ public class KnightTourApplication extends Application {
     public Location getCurrentLoc() {
         return currentLoc;
     }
-
-    // Helper to render text on screen
 
     public int getMoveNum(int i, int j) {
         return board[i][j];
@@ -155,7 +132,6 @@ public class KnightTourApplication extends Application {
         return stack.size();
     }
 
-    // Handle the GUI feedback and changes
     @Override
     public void start(Stage stage) throws IOException {
         Scene rootScene = new Scene(controller.getAnchorPane(), 1024, 768);

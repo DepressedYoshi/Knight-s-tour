@@ -15,10 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
-
 import java.util.ArrayList;
-import javafx.scene.text.Font;
 
 public class KnightTourController {
     public static final int NUM_ROWS = 5;
@@ -38,7 +35,6 @@ public class KnightTourController {
     private Canvas canvas;
     private GraphicsContext gc;
     private AnimationTimer timer;
-    private long attempNum = 0;
 
     public void setNeighbor(ArrayList<Location> neighbor) {
         this.neighbor = neighbor;
@@ -80,7 +76,7 @@ public class KnightTourController {
 
     private void createGUI() {
         //board
-        canvas = new Canvas(600,500); //a 600x500 canvas area
+        canvas = new Canvas(800,900); //a 600x500 canvas area
         gc = canvas.getGraphicsContext2D(); //a GraphicsContext to draw on the canvas
         gc.setFill(Color.TRANSPARENT); //choose a red color
         gc.fillRect(0,0,600,500); //fill the entire area, 600x500, with a
@@ -141,7 +137,7 @@ public class KnightTourController {
     private void drawTexts() {
         gc.clearRect(80, NUM_ROWS*SIZE+10, 800, 200);
         drawNumber("Moves solved: " + app.getMove(), 80, NUM_ROWS*SIZE+50, 18); // Larger font size for text
-        drawNumber("Total Number Attempted: " + app.getAttemptMove(), 80, NUM_ROWS*SIZE+90, 18); // Set font size to 18
+        drawNumber("Total Number Attempted: " + app.getAttemptMove(), 80, NUM_ROWS*SIZE+80, 18); // Set font size to 18
     }
 
     public void draw() {
