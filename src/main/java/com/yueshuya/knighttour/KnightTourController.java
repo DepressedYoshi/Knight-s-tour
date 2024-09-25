@@ -14,12 +14,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
+import javafx.scene.text.Font;
 
 public class KnightTourController {
-    public static final int NUM_ROWS = 8;
-    public static final int NUM_COLS = 8;
+    public static final int NUM_ROWS = 5;
+    public static final int NUM_COLS = 5;
     public static final int SIZE = 60;
 
 
@@ -35,7 +38,7 @@ public class KnightTourController {
     private Canvas canvas;
     private GraphicsContext gc;
     private AnimationTimer timer;
-
+    private long attempNum = 0;
 
     public void setNeighbor(ArrayList<Location> neighbor) {
         this.neighbor = neighbor;
@@ -59,13 +62,12 @@ public class KnightTourController {
 
     }
 
-    // Setup timeline for continuous movement
+
     private void setupAnimationTimer() {
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 app.move();
-                app.printBoard();
                 draw();
             }
         };
@@ -129,9 +131,17 @@ public class KnightTourController {
         gc.setFill(color);
         gc.fillRect(x+ 2, y+ 2, KnightTourController.SIZE -(2 *2), KnightTourController.SIZE -(2 *2));
     }
-    private void drawNumber(int s, int x, int y){
+
+    private void drawNumber(String s, int x, int y, double fontSize){
         gc.setFill(Color.BLACK);
-        gc.fillText(String.valueOf(s), x,y);
+        gc.setFont(new Font("Arial", fontSize));
+        gc.fillText(s, x, y);
+    }
+
+    private void drawTexts() {
+        gc.clearRect(80, NUM_ROWS*SIZE+10, 800, 200);
+        drawNumber("Moves solved: " + app.getMove(), 80, NUM_ROWS*SIZE+50, 18); // Larger font size for text
+        drawNumber("Total Number Attempted: " + app.getAttemptMove(), 80, NUM_ROWS*SIZE+90, 18); // Set font size to 18
     }
 
     public void draw() {
@@ -140,6 +150,7 @@ public class KnightTourController {
             for (int j = 0; j < NUM_COLS; j++) {
                 Location me = new Location(i,j);
                 Location currLoc = app.getCurrentLoc();
+                int value = app.getMoveNum(i,j);
                 if (currLoc != null && currLoc.equals(me))
                     color = Color.CYAN;
                 else if (neighbor.contains(me)) {
@@ -147,10 +158,15 @@ public class KnightTourController {
                 } else
                     color = Color.BURLYWOOD;
                 drawSingleSquare(50+j*SIZE , 10+i*SIZE, color);
-
+                if (value > 0){
+                    drawNumber(String.valueOf(value), 75+j*SIZE , 45+i*SIZE, 16);
+                }
             }
         }
+        drawTexts();
     }
+
+
 
     private void attchListeners() {
         startButton.setOnAction(this::handleButtonClicks);
@@ -167,7 +183,6 @@ public class KnightTourController {
 
         if (actionEvent.getSource() == stepButton) {
             app.move();
-            app.printBoard();
             draw();
         }
     }

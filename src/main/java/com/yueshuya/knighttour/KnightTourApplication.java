@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
@@ -17,9 +16,12 @@ public class KnightTourApplication extends Application {
     private final int[][] board = new int[KnightTourController.NUM_ROWS][KnightTourController.NUM_COLS];
     private Stack<Location> stack = new Stack<>();
     private HashMap<Location, ArrayList<Location>> exhaustedList = new HashMap<>();
-    private int move = 0;
+//    private int move = 0;
+
+    private int attemptMove = 0;
 
     // M7 - Adding, Deleting, and Checking if a Location is in the Exhausted List
+
     private void addLoc(Location start, Location end) {
         if (isInMap(start)){
             exhaustedList.get(start).add(end);
@@ -29,7 +31,6 @@ public class KnightTourApplication extends Application {
             exhaustedList.put(start, list);
         }
     }
-
     private void removeLoc(Location location) {
         exhaustedList.remove(location);
     }
@@ -39,6 +40,7 @@ public class KnightTourApplication extends Application {
     }
 
     // M8 - Finding Valid Neighbors
+
     public ArrayList<Location> findNeighbor(Location location) {
         ArrayList<Location> neighbors = new ArrayList<>();
         if (location == null)
@@ -60,7 +62,6 @@ public class KnightTourApplication extends Application {
         controller.setNeighbor(neighbors);
         return neighbors;
     }
-
     private void removeWrongPath(ArrayList<Location> neighbors, Location currentLoc) {
         if (isInMap(currentLoc)){
            for (Location l : exhaustedList.get(currentLoc)){
@@ -71,6 +72,7 @@ public class KnightTourApplication extends Application {
 
 
     // M9
+
     private boolean isValidLoc(Location location) {
         int x = location.getCol();
         int y = location.getRow();
@@ -78,38 +80,45 @@ public class KnightTourApplication extends Application {
         boolean inBound = x >= 0 && x < KnightTourController.NUM_COLS && y >= 0 && y < KnightTourController.NUM_ROWS;
         return inBound && notTried;
     }
-
     private boolean notBeenThere(Location target) {
         return board[target.getRow()][target.getCol()] == 0;
     }
 
     // Milestone 10 -  Choosing a move, and moving forward
+
     public void move() {
+        if (tourComplete()){
+            return;
+        }
         Location holder = getCurrentLoc();
         Location nextMove = chooseNextMove();
 
-        if (nextMove == null && !tourComplete()) {
+        if (nextMove == null) {
             backTrack();
         }else{
             setCurrentLoc(nextMove);
             addLoc(holder, getCurrentLoc());
         }
+        attemptMove ++;
 
     }
-
     // Fix the condition for checking if the tour is complete
-    private boolean tourComplete() {
-        return move >= KnightTourController.NUM_ROWS * KnightTourController.NUM_COLS;
-    }
 
+    private boolean tourComplete() {
+        return stack.size() >= (KnightTourController.NUM_ROWS * KnightTourController.NUM_COLS);
+    }
     private void backTrack() {
         if (!stack.isEmpty()) {
             Location lastLocation = stack.pop();
             board[lastLocation.getRow()][lastLocation.getCol()] = 0;  // Mark as unvisited
-            move--;
+//            move--;
             if (!stack.isEmpty()) {
                 currentLoc = stack.peek();
                 findNeighbor(currentLoc);  // Find neighbors again after backtracking
+                if (controller.getNeighbor().isEmpty()){
+                    removeLoc(currentLoc);
+                    backTrack();
+                }
             }
         }
     }
@@ -118,24 +127,32 @@ public class KnightTourApplication extends Application {
         if (controller.getNeighbor().isEmpty()) {
             return null;
         }
-        return controller.getNeighbor().get(0);  // Fixed to use get(0) instead of getFirst()
+        return controller.getNeighbor().getFirst();  // Fixed to use get(0) instead of getFirst()
     }
 
     // M4 - Set location and update the board
+
     public void setCurrentLoc(Location loc) {
         currentLoc = loc;
-        board[currentLoc.getRow()][currentLoc.getCol()] = ++move;
         stack.push(loc);
+        board[currentLoc.getRow()][currentLoc.getCol()] = stack.size();
         findNeighbor(currentLoc);
     }
-
     public Location getCurrentLoc() {
         return currentLoc;
     }
 
     // Helper to render text on screen
-    public int getMoveNum(Location location) {
-        return board[location.getRow()][location.getCol()];
+
+    public int getMoveNum(int i, int j) {
+        return board[i][j];
+    }
+    public int getAttemptMove() {
+        return attemptMove;
+    }
+
+    public int getMove() {
+        return stack.size();
     }
 
     // Handle the GUI feedback and changes
@@ -156,16 +173,5 @@ public class KnightTourApplication extends Application {
 
     public static void main(String[] args) {
         launch();
-    }
-
-    public void printBoard() {
-        for (int[] ints : board) {
-            for (int j = 0; j < board[0].length; j++) {
-                System.out.print(ints[j] + "  ");
-            }
-            System.out.println();
-        }
-        System.out.println(controller.getNeighbor());
-
     }
 }
