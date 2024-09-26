@@ -15,11 +15,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
-import java.util.ArrayList;
 
 public class KnightTourController {
-    public static final int NUM_ROWS = 5;
-    public static final int NUM_COLS = 5;
+    public static final int NUM_ROWS = 8;
+    public static final int NUM_COLS = 8;
     public static final int SIZE = 60;
 
 
@@ -28,6 +27,8 @@ public class KnightTourController {
     //GUI compoenents
     private Button startButton;
     private Button stepButton;
+    private Button resetButton;
+    private Button mode;
     private Label rowLabel;
     private Label colLabel;
     private TextField rowTextField;
@@ -36,15 +37,8 @@ public class KnightTourController {
     private GraphicsContext gc;
     private AnimationTimer timer;
 
-    public void setNeighbor(ArrayList<Location> neighbor) {
-        this.neighbor = neighbor;
-    }
 
-    public ArrayList<Location> getNeighbor() {
-        return neighbor;
-    }
 
-    private ArrayList<Location> neighbor = new ArrayList<>();
 
     public KnightTourController(KnightTourApplication app)
     {
@@ -119,6 +113,20 @@ public class KnightTourController {
         AnchorPane.setTopAnchor(stepButton, 210.0);
         AnchorPane.setRightAnchor(stepButton, 140.0);
         anchorPane.getChildren().add(stepButton);
+
+        // reset button
+        resetButton = new Button("Reset");
+        resetButton.setPrefWidth(100);
+        AnchorPane.setTopAnchor(resetButton, 250.0);
+        AnchorPane.setRightAnchor(resetButton, 140.0);
+        anchorPane.getChildren().add(resetButton);
+
+        //BFbutton
+        mode = new Button("Mode: Warnsdorff");
+        mode.setPrefWidth(200);
+        AnchorPane.setTopAnchor(mode, 290.0);
+        AnchorPane.setRightAnchor(mode, 90.0);
+        anchorPane.getChildren().add(mode);
     }
 
     private void drawSingleSquare(int x, int y, Paint color) {
@@ -149,7 +157,7 @@ public class KnightTourController {
                 int value = app.getMoveNum(i,j);
                 if (currLoc != null && currLoc.equals(me))
                     color = Color.CYAN;
-                else if (neighbor.contains(me)) {
+                else if (app.getNeighbor().contains(me)) {
                     color = Color.GREEN;
                 } else
                     color = Color.BURLYWOOD;
@@ -167,7 +175,10 @@ public class KnightTourController {
     private void attchListeners() {
         startButton.setOnAction(this::handleButtonClicks);
         stepButton.setOnAction(this::handleButtonClicks);
+        resetButton.setOnAction(this::handleButtonClicks);
+        mode.setOnAction(this::handleButtonClicks);
     }
+
     private void handleButtonClicks(ActionEvent actionEvent) {
         if (actionEvent.getSource() == startButton) {
             if (startButton.getText().equals("Start")) {
@@ -180,6 +191,25 @@ public class KnightTourController {
         if (actionEvent.getSource() == stepButton) {
             app.move();
             draw();
+        }
+         if (actionEvent.getSource() == resetButton){
+             handleStopButton();
+             app.reset();
+             draw();
+         }
+         if (actionEvent.getSource() == mode){
+             handleModeButton();
+        }
+    }
+
+    private void handleModeButton() {
+        String text = mode.getText();
+        if (text.equals("Mode: Warnsdorff")){
+            mode.setText("Mode: Brute Force");
+            app.setMode(false);
+        }else {
+            mode.setText("Mode: Warnsdorff");
+            app.setMode(true);
         }
     }
 

@@ -13,10 +13,17 @@ import java.util.Stack;
 public class KnightTourApplication extends Application {
     private Location currentLoc = null;
     public KnightTourController controller = new KnightTourController(this);
-    private final int[][] board = new int[KnightTourController.NUM_ROWS][KnightTourController.NUM_COLS];
+    private int[][] board = new int[KnightTourController.NUM_ROWS][KnightTourController.NUM_COLS];
     private Stack<Location> stack = new Stack<>();
     private HashMap<Location, ArrayList<Location>> exhaustedList = new HashMap<>();
     private int attemptMove = 0;
+    private ArrayList<Location> neighbor = new ArrayList<>();
+    private boolean mode = true;
+    // All possible knight moves
+    private final int[][] moves = {
+            {2, 1}, {2, -1}, {-2, 1}, {-2, -1},
+            {1, 2}, {1, -2}, {-1, 2}, {-1, -2}
+    };
 
     private void addLoc(Location start, Location end) {
         if (isInMap(start)){
@@ -34,17 +41,11 @@ public class KnightTourApplication extends Application {
     private boolean isInMap(Location loc) {
         return exhaustedList.containsKey(loc);
     }
-    public void findNeighbor(Location location) {
+    public ArrayList<Location> findNeighbor(Location location) {
+        if (location == null) {
+            return null;
+        }
         ArrayList<Location> neighbors = new ArrayList<>();
-        if (location == null)
-            return;
-
-        // All possible knight moves
-        int[][] moves = {
-                {2, 1}, {2, -1}, {-2, 1}, {-2, -1},
-                {1, 2}, {1, -2}, {-1, 2}, {-1, -2}
-        };
-
         for (int[] m : moves) {
             Location target = new Location(location.getRow() + m[0], location.getCol() + m[1]);
             if (isValidLoc(target) && notBeenThere(target)) {
@@ -52,7 +53,8 @@ public class KnightTourApplication extends Application {
             }
         }
         removeWrongPath(neighbors, location);
-        controller.setNeighbor(neighbors);
+        setNeighbor(neighbors);
+        return neighbors;
     }
     private void removeWrongPath(ArrayList<Location> neighbors, Location currentLoc) {
         if (isInMap(currentLoc)){
@@ -76,7 +78,7 @@ public class KnightTourApplication extends Application {
             return;
         }
         Location holder = getCurrentLoc();
-        Location nextMove = chooseNextMove();
+        Location nextMove = chooseNextMove(neighbor);
 
         if (nextMove == null) {
             backTrack();
@@ -98,19 +100,37 @@ public class KnightTourApplication extends Application {
                 currentLoc = stack.peek();
                 // Find neighbors again after backtracking - only remove from map if still no move available after backtracking one step
                 findNeighbor(currentLoc);
-                if (controller.getNeighbor().isEmpty()){
+                if (neighbor.isEmpty()){
                     removeLoc(currentLoc);
                     backTrack();
                 }
             }
         }
     }
-    private Location chooseNextMove() {
-        if (controller.getNeighbor().isEmpty()) {
+
+    private Location chooseNextMove(ArrayList<Location> neighbor){
+        if (neighbor.isEmpty()) {
             return null;
         }
-        return controller.getNeighbor().getFirst();
+        Location nextMove = neighbor.get(0);
+        if (mode){
+            int initA = evalAccessibility(nextMove);
+            for(Location l : neighbor){
+                int test = evalAccessibility(l);
+                if ( test < initA){
+                    initA = test;
+                    nextMove = l;
+                };
+            }
+        }
+        return nextMove;
     }
+
+    private int evalAccessibility(Location l) {
+        return findNeighbor(l).size();
+    }
+
+
     public void setCurrentLoc(Location loc) {
         currentLoc = loc;
         stack.push(loc);
@@ -130,6 +150,29 @@ public class KnightTourApplication extends Application {
 
     public int getMove() {
         return stack.size();
+    }
+
+    public ArrayList<Location> getNeighbor() {
+        return neighbor;
+    }
+
+    public void setNeighbor(ArrayList<Location> neighbor) {
+        this.neighbor = neighbor;
+    }
+
+    public void setMode(boolean mode) {
+        this.mode = mode;
+    }
+
+    public void reset(){
+        currentLoc = null;
+        controller = new KnightTourController(this);
+        board = new int[KnightTourController.NUM_ROWS][KnightTourController.NUM_COLS];
+        stack = new Stack<>();
+        exhaustedList = new HashMap<>();
+        attemptMove = 0;
+        neighbor = new ArrayList<>();
+        controller = new KnightTourController(this);
     }
 
     @Override
