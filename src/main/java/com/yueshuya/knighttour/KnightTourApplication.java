@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Stack;
 
 public class KnightTourApplication extends Application {
+    private AnimationTimer animationTimer;  // Declare this outside start()
     private KnightTourController controller = new KnightTourController(this);
     private int[][] board = new int[KnightTourController.NUM_ROWS][KnightTourController.NUM_COLS];
     private int attemptMove = 0;
@@ -84,7 +85,7 @@ public class KnightTourApplication extends Application {
             return; // stops the attempts counter / freeze when the problem is solved
         }
         Location holder = getCurrentLoc();
-        Location nextMove = chooseNextMove(neighbor);
+        Location nextMove = newMove();
         if (nextMove == null) {
             backTrack();
         }else{
@@ -93,6 +94,16 @@ public class KnightTourApplication extends Application {
         }
         attemptMove ++;
     }
+
+    private Location newMove() {
+        if (neighbor.isEmpty())
+            return null;
+        else if (mode)
+            return chooseNextMove(neighbor);
+        else
+            return neighbor.getFirst();
+    }
+
     private boolean tourComplete() {
         return stack.size() >= (KnightTourController.NUM_ROWS * KnightTourController.NUM_COLS);
     }
@@ -118,12 +129,8 @@ public class KnightTourApplication extends Application {
 // Moves by default selects the first available positions of the Arraylist of neighbors
 // but the mode by default is set to true - that ops for a Warnsdorff approach
     private Location chooseNextMove(ArrayList<Location> neighbor){
-        if (neighbor.isEmpty()) {
-            return null;
-        }
         Location nextMove = neighbor.getFirst();
         //Warnsdorff: select the move with lest accessibility
-        if (mode){
             int initA = evalAccessibility(nextMove);
             for(Location l : neighbor){ //basic min algo
                 int test = evalAccessibility(l);
@@ -132,7 +139,6 @@ public class KnightTourApplication extends Application {
                     nextMove = l;
                 }
             }
-        }
         return nextMove;
     }
 
@@ -173,29 +179,49 @@ public class KnightTourApplication extends Application {
         this.mode = mode;
     }
 
-    public void reset(){
+    public void reset() {
         currentLoc = null;
-        controller = new KnightTourController(this);
-        board = new int[KnightTourController.NUM_ROWS][KnightTourController.NUM_COLS];
-        stack = new Stack<>();
-        exhaustedList = new HashMap<>();
+        // Reset the board to initial state by clearing values
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                board[i][j] = 0;
+            }
+        }
+
+        // Clear stack and exhausted paths
+        stack.clear();
+        exhaustedList.clear();
         attemptMove = 0;
-        neighbor = new ArrayList<>();
-        controller = new KnightTourController(this);
+        neighbor.clear();
+
+        // Stop any active timers
+        stopTimer();
+
+        // Redraw the board
+        controller.draw();
     }
+
+    private void stopTimer() {
+        if (animationTimer != null) {
+            animationTimer.stop();
+        }
+    }
+
 
     @Override
     public void start(Stage stage) throws IOException {
         Scene rootScene = new Scene(controller.getAnchorPane(), 1024, 768);
         stage.setTitle("Knight's Tour");
         stage.setScene(rootScene);
-        AnimationTimer animationTimer = new AnimationTimer() {
-            @Override
-            public void handle(long l) {
-                controller.draw();
-            }
-        };
-        animationTimer.start();
+        if (animationTimer == null){
+            animationTimer = new AnimationTimer() {
+                @Override
+                public void handle(long l) {
+                    controller.draw();
+                }
+            };
+            animationTimer.start();
+        }
         stage.show();
     }
 
