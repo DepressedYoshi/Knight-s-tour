@@ -61,66 +61,66 @@ public class KnightTourController {
     }
 
     private void createGUI() {
-        //board
-        canvas = new Canvas(800,900); //a 600x500 canvas area
-        gc = canvas.getGraphicsContext2D(); //a GraphicsContext to draw on the canvas
-        gc.setFill(Color.TRANSPARENT); //choose a red color
-        gc.fillRect(0,0,600,500); //fill the entire area, 600x500, with a
-        AnchorPane.setLeftAnchor(canvas, 50.0); //anchor the canvas 50 pixels to the
-        AnchorPane.setTopAnchor(canvas, 100.0); //anchor the canvas 100 pixels down from
-        anchorPane.getChildren().add(canvas); //add the canvas to the AnchorPane
-        //rowLabel
-        rowLabel = new Label("row");
-        AnchorPane.setTopAnchor(rowLabel, 100.0);
-        AnchorPane.setRightAnchor(rowLabel, 200.0);
-        anchorPane.getChildren().add(rowLabel);
-        //colLabel
-        colLabel = new Label("column");
-        AnchorPane.setTopAnchor(colLabel, 130.0);
-        AnchorPane.setRightAnchor(colLabel, 200.0);
-        anchorPane.getChildren().add(colLabel);
-        //rowText
-        rowTextField = new TextField();
-        rowTextField.setPrefWidth(50);
-        AnchorPane.setTopAnchor(rowTextField, 97.0);
-        AnchorPane.setRightAnchor(rowTextField, 135.0);
-        anchorPane.getChildren().add(rowTextField);
-        //col text
-        colTextField = new TextField();
-        colTextField.setPrefWidth(50);
-        AnchorPane.setTopAnchor(colTextField, 127.0);
-        AnchorPane.setRightAnchor(colTextField, 135.0);
-        anchorPane.getChildren().add(colTextField);
-
-        //start button
-        startButton = new Button("Start");
-        startButton.setPrefWidth(100);
-        AnchorPane.setTopAnchor(startButton, 170.0);
-        AnchorPane.setRightAnchor(startButton, 140.0);
-        anchorPane.getChildren().add(startButton);
-
-        //Step button
-        stepButton = new Button("Step");
-        stepButton.setPrefWidth(100);
-        AnchorPane.setTopAnchor(stepButton, 210.0);
-        AnchorPane.setRightAnchor(stepButton, 140.0);
-        anchorPane.getChildren().add(stepButton);
-
-        // reset button
-        resetButton = new Button("Reset");
-        resetButton.setPrefWidth(100);
-        AnchorPane.setTopAnchor(resetButton, 250.0);
-        AnchorPane.setRightAnchor(resetButton, 140.0);
-        anchorPane.getChildren().add(resetButton);
-
-        //mode button
-        mode = new Button("Mode: Warnsdorff");
-        mode.setPrefWidth(200);
-        AnchorPane.setTopAnchor(mode, 290.0);
-        AnchorPane.setRightAnchor(mode, 90.0);
-        anchorPane.getChildren().add(mode);
+        createCanvas();
+        createLabels();
+        createTextFields();
+        createButtons();
     }
-//helper  method - color in a tile
+
+    private void createCanvas() {
+        canvas = new Canvas(800, 900);
+        gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.TRANSPARENT);
+        gc.fillRect(0, 0, 600, 500);
+        AnchorPane.setLeftAnchor(canvas, 50.0);
+        AnchorPane.setTopAnchor(canvas, 100.0);
+        anchorPane.getChildren().add(canvas);
+    }
+
+    private void createLabels() {
+        rowLabel = createLabel("row", 100.0, 200.0);
+        colLabel = createLabel("column", 130.0, 200.0);
+    }
+
+    private Label createLabel(String text, double topAnchor, double rightAnchor) {
+        Label label = new Label(text);
+        AnchorPane.setTopAnchor(label, topAnchor);
+        AnchorPane.setRightAnchor(label, rightAnchor);
+        anchorPane.getChildren().add(label);
+        return label;
+    }
+
+    private void createTextFields() {
+        rowTextField = createTextField(97.0, 135.0);
+        colTextField = createTextField(127.0, 135.0);
+    }
+
+    private TextField createTextField(double topAnchor, double rightAnchor) {
+        TextField textField = new TextField();
+        textField.setPrefWidth(50);
+        AnchorPane.setTopAnchor(textField, topAnchor);
+        AnchorPane.setRightAnchor(textField, rightAnchor);
+        anchorPane.getChildren().add(textField);
+        return textField;
+    }
+
+    private void createButtons() {
+        startButton = createButton("Start", 170.0, 140.0, 100);
+        stepButton = createButton("Step", 210.0, 140.0, 100);
+        resetButton = createButton("Reset", 250.0, 140.0, 100);
+        mode = createButton("Mode: Warnsdorff", 290.0, 90.0, 200);
+    }
+
+    private Button createButton(String text, double topAnchor, double rightAnchor, double prefWidth) {
+        Button button = new Button(text);
+        button.setPrefWidth(prefWidth);
+        AnchorPane.setTopAnchor(button, topAnchor);
+        AnchorPane.setRightAnchor(button, rightAnchor);
+        anchorPane.getChildren().add(button);
+        return button;
+    }
+
+    //helper  method - color in a tile
     private void drawSingleSquare(int x, int y, Paint color) {
         gc.setFill(Color.GOLDENROD);
         gc.fillRect(x, y, KnightTourController.SIZE, KnightTourController.SIZE);
