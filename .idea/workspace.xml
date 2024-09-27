@@ -4,14 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-<<<<<<< HEAD
-    <list default="true" id="f648658f-b3db-416d-a8be-7d16c03155b6" name="Changes" comment="" />
-=======
     <list default="true" id="f648658f-b3db-416d-a8be-7d16c03155b6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/yueshuya/knighttour/KnightTourApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/yueshuya/knighttour/KnightTourApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/yueshuya/knighttour/KnightTourController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/yueshuya/knighttour/KnightTourController.java" afterDir="false" />
     </list>
->>>>>>> c84df2213903a03ee6f47a5ffca386ab68022c65
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

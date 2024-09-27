@@ -1,7 +1,7 @@
 package com.yueshuya.knighttour;
 
 /*
-we are using this file as botht eh contoller and the view
+we are using this file as both eh controller and the view
  */
 
 import javafx.animation.AnimationTimer;
@@ -24,7 +24,7 @@ public class KnightTourController {
 
     private KnightTourApplication app;
     private AnchorPane anchorPane;
-    //GUI compoenents
+    //GUI components
     private Button startButton;
     private Button stepButton;
     private Button resetButton;
@@ -37,22 +37,16 @@ public class KnightTourController {
     private GraphicsContext gc;
     private AnimationTimer timer;
 
-
-
-
+    //Application must establish communication between the application and the controller  - IE pass in itself
     public KnightTourController(KnightTourApplication app)
-    {
-        this.app = app;
+    {   this.app = app;
         anchorPane = new AnchorPane();
-
         createGUI();
         attchListeners();
-
         setupAnimationTimer();
-
     }
 
-
+//a separate animation timer for the algorithm visualization
     private void setupAnimationTimer() {
         timer = new AnimationTimer() {
             @Override
@@ -62,8 +56,6 @@ public class KnightTourController {
             }
         };
     }
-
-
     public AnchorPane getAnchorPane() {
         return anchorPane;
     }
@@ -121,48 +113,51 @@ public class KnightTourController {
         AnchorPane.setRightAnchor(resetButton, 140.0);
         anchorPane.getChildren().add(resetButton);
 
-        //BFbutton
+        //mode button
         mode = new Button("Mode: Warnsdorff");
         mode.setPrefWidth(200);
         AnchorPane.setTopAnchor(mode, 290.0);
         AnchorPane.setRightAnchor(mode, 90.0);
         anchorPane.getChildren().add(mode);
     }
-
+//helper  method - color in a tile
     private void drawSingleSquare(int x, int y, Paint color) {
         gc.setFill(Color.GOLDENROD);
         gc.fillRect(x, y, KnightTourController.SIZE, KnightTourController.SIZE);
         gc.setFill(color);
         gc.fillRect(x+ 2, y+ 2, KnightTourController.SIZE -(2 *2), KnightTourController.SIZE -(2 *2));
     }
-
+//helper methods for text based GUI
     private void drawNumber(String s, int x, int y, double fontSize){
         gc.setFill(Color.BLACK);
         gc.setFont(new Font("Arial", fontSize));
         gc.fillText(s, x, y);
     }
-
+    //helper methods that handles all the text on screen
     private void drawTexts() {
         gc.clearRect(80, NUM_ROWS*SIZE+10, 800, 200);
         drawNumber("Moves solved: " + app.getMove(), 80, NUM_ROWS*SIZE+50, 18); // Larger font size for text
         drawNumber("Total Number Attempted: " + app.getAttemptMove(), 80, NUM_ROWS*SIZE+80, 18); // Set font size to 18
     }
 
+
+    //This draws on the canvas
     public void draw() {
         Color color;
+        //draw the chess board
         for (int i = 0; i < NUM_ROWS; i++) {
             for (int j = 0; j < NUM_COLS; j++) {
                 Location me = new Location(i,j);
                 Location currLoc = app.getCurrentLoc();
                 int value = app.getMoveNum(i,j);
-                if (currLoc != null && currLoc.equals(me))
+                if (currLoc != null && currLoc.equals(me)) // draw current location
                     color = Color.CYAN;
-                else if (app.getNeighbor().contains(me)) {
+                else if (app.getNeighbor().contains(me)) { //draw the neighbors
                     color = Color.GREEN;
                 } else
                     color = Color.BURLYWOOD;
                 drawSingleSquare(50+j*SIZE , 10+i*SIZE, color);
-                if (value > 0){
+                if (value > 0){ //show the steps
                     drawNumber(String.valueOf(value), 75+j*SIZE , 45+i*SIZE, 16);
                 }
             }
@@ -178,7 +173,7 @@ public class KnightTourController {
         resetButton.setOnAction(this::handleButtonClicks);
         mode.setOnAction(this::handleButtonClicks);
     }
-
+//master input switch
     private void handleButtonClicks(ActionEvent actionEvent) {
         if (actionEvent.getSource() == startButton) {
             if (startButton.getText().equals("Start")) {
@@ -201,7 +196,7 @@ public class KnightTourController {
              handleModeButton();
         }
     }
-
+// toggle between brute force and Warnsdorff solution
     private void handleModeButton() {
         String text = mode.getText();
         if (text.equals("Mode: Warnsdorff")){
@@ -241,7 +236,7 @@ public class KnightTourController {
         timer.stop();
     }
 
-    // Modularity - maybe more input chekc in the future
+    // Modularity - maybe more input check in the future
     private boolean isValidInput(String rowText, String colText) {
         return isValidInteger(rowText) && isValidInteger(colText);
     }
