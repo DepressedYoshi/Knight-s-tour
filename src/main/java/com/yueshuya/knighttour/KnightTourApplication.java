@@ -10,15 +10,15 @@ import java.util.HashMap;
 import java.util.Stack;
 
 public class KnightTourApplication extends Application {
-    private AnimationTimer animationTimer;  // Declare this outside start()
     private final KnightTourController controller = new KnightTourController(this);
-    private final int[][] board = new int[KnightTourController.NUM_ROWS][KnightTourController.NUM_COLS];
-    private int attemptMove = 0;
-    private boolean mode = true;
-    private Location currentLoc = null;
     private final Stack<Location> stack = new Stack<>();
     private final HashMap<Location, ArrayList<Location>> exhaustedList = new HashMap<>();
+    private final int[][] board = new int[KnightTourController.NUM_ROWS][KnightTourController.NUM_COLS];
+    private Location currentLoc = null;
     private ArrayList<Location> neighbor = new ArrayList<>();
+    private AnimationTimer animationTimer;  // Declare this outside start()
+    private int attemptMove = 0;
+    private boolean mode = true;
     // All possible knight moves
     private final int[][] moves = {
             {2, 1}, {2, -1}, {-2, 1}, {-2, -1},
