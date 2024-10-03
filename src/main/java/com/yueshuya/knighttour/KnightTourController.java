@@ -17,13 +17,13 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
 public class KnightTourController {
-    public static final int NUM_ROWS = 8;
-    public static final int NUM_COLS = 8;
+    public static final int NUM_ROWS = 10;
+    public static final int NUM_COLS = 10;
     public static final int SIZE = 60;
 
 
-    private KnightTourApplication app;
-    private AnchorPane anchorPane;
+    private final KnightTourApplication app;
+    private final AnchorPane anchorPane;
     //GUI components
     private Button startButton;
     private Button stepButton;
@@ -188,15 +188,20 @@ public class KnightTourController {
             draw();
         }
          if (actionEvent.getSource() == resetButton){
-             handleStopButton();
-             app.reset();
-             draw();
+             handleResetButton();
          }
-         if (actionEvent.getSource() == mode){
-             handleModeButton();
+        if (actionEvent.getSource() == mode){
+            handleModeButton();
         }
     }
-// toggle between brute force and Warnsdorff solution
+
+    private void handleResetButton() {
+        handleStopButton();
+        app.reset();
+        draw();
+    }
+
+    // toggle between brute force and Warnsdorff solution
     private void handleModeButton() {
         String text = mode.getText();
         if (text.equals("Mode: Warnsdorff")){
@@ -210,6 +215,9 @@ public class KnightTourController {
 
     //toggle flash mode
     private void handleStartButton() {
+        if (app.tourComplete()){
+            handleResetButton();
+        }
         String rowText = rowTextField.getText();
         String colText = colTextField.getText();
 
@@ -263,6 +271,4 @@ public class KnightTourController {
             return false;
         }
     }
-
-
 }

@@ -5,18 +5,19 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Stack;
 
 public class KnightTourApplication extends Application {
     private AnimationTimer animationTimer;  // Declare this outside start()
-    private KnightTourController controller = new KnightTourController(this);
-    private int[][] board = new int[KnightTourController.NUM_ROWS][KnightTourController.NUM_COLS];
+    private final KnightTourController controller = new KnightTourController(this);
+    private final int[][] board = new int[KnightTourController.NUM_ROWS][KnightTourController.NUM_COLS];
     private int attemptMove = 0;
     private boolean mode = true;
     private Location currentLoc = null;
-    private Stack<Location> stack = new Stack<>();
-    private HashMap<Location, ArrayList<Location>> exhaustedList = new HashMap<>();
+    private final Stack<Location> stack = new Stack<>();
+    private final HashMap<Location, ArrayList<Location>> exhaustedList = new HashMap<>();
     private ArrayList<Location> neighbor = new ArrayList<>();
     // All possible knight moves
     private final int[][] moves = {
@@ -44,7 +45,7 @@ public class KnightTourApplication extends Application {
     }
 
     //returns the sets of reachable positions of a given position
-    public ArrayList<Location> findNeighbor(Location location) {
+    private ArrayList<Location> findNeighbor(Location location) {
         if (location == null) {
             return null;
         }
@@ -104,7 +105,7 @@ public class KnightTourApplication extends Application {
             return neighbor.getFirst();
     }
 
-    private boolean tourComplete() {
+    public boolean tourComplete() {
         return stack.size() >= (KnightTourController.NUM_ROWS * KnightTourController.NUM_COLS);
     }
 
@@ -182,10 +183,8 @@ public class KnightTourApplication extends Application {
     public void reset() {
         currentLoc = null;
         // Reset the board to initial state by clearing values
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                board[i][j] = 0;
-            }
+        for (int[] ints : board) {
+            Arrays.fill(ints, 0);
         }
 
         // Clear stack and exhausted paths
