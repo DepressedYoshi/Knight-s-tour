@@ -21,8 +21,7 @@ public class KnightTourApplication extends Application {
     private boolean mode = true;
     // All possible knight moves
     private final int[][] moves = {
-            {2, 1}, {2, -1}, {-2, 1}, {-2, -1},
-            {1, 2}, {1, -2}, {-1, 2}, {-1, -2}
+            {2, -1}, {2, 1}, {1, 2}, {-1, 2}, {-2, -1}, {-2, 1}, {-1, -2}, {1, -2}
     };
 
 

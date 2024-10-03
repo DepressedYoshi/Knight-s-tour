@@ -15,11 +15,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 public class KnightTourController {
-    public static final int NUM_ROWS = 10;
-    public static final int NUM_COLS = 10;
-    public static final int SIZE = 60;
+    public static final int NUM_ROWS = 8;
+    public static final int NUM_COLS = 8;
+    public static final int SIZE = 70;
+    private final int CANVAS_WIDTH = 800;
+    private final int CANVAS_HEIGHT = 800;
 
 
     private final KnightTourApplication app;
@@ -29,11 +32,8 @@ public class KnightTourController {
     private Button stepButton;
     private Button resetButton;
     private Button mode;
-    private Label rowLabel;
-    private Label colLabel;
     private TextField rowTextField;
     private TextField colTextField;
-    private Canvas canvas;
     private GraphicsContext gc;
     private AnimationTimer timer;
 
@@ -68,18 +68,18 @@ public class KnightTourController {
     }
 
     private void createCanvas() {
-        canvas = new Canvas(800, 900);
+        Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.TRANSPARENT);
-        gc.fillRect(0, 0, 600, 500);
+        gc.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         AnchorPane.setLeftAnchor(canvas, 50.0);
         AnchorPane.setTopAnchor(canvas, 100.0);
         anchorPane.getChildren().add(canvas);
     }
 
     private void createLabels() {
-        rowLabel = createLabel("row", 100.0, 200.0);
-        colLabel = createLabel("column", 130.0, 200.0);
+        Label rowLabel = createLabel("row", 100.0, 200.0);
+        Label colLabel = createLabel("column", 130.0, 200.0);
     }
 
     private Label createLabel(String text, double topAnchor, double rightAnchor) {
@@ -122,28 +122,55 @@ public class KnightTourController {
 
     //helper  method - color in a tile
     private void drawSingleSquare(int x, int y, Paint color) {
-        gc.setFill(Color.GOLDENROD);
-        gc.fillRect(x, y, KnightTourController.SIZE, KnightTourController.SIZE);
+        gc.setFill(Color.BLACK);
+        gc.fillRect(x, y, SIZE+2, SIZE+2);
         gc.setFill(color);
-        gc.fillRect(x+ 2, y+ 2, KnightTourController.SIZE -(2 *2), KnightTourController.SIZE -(2 *2));
+        gc.fillRect(x+ 2, y+ 2, SIZE -(2), SIZE -(2));
     }
 //helper methods for text based GUI
-    private void drawNumber(String s, int x, int y, double fontSize){
+    private void drawStat(String s, int y){
         gc.setFill(Color.BLACK);
-        gc.setFont(new Font("Arial", fontSize));
-        gc.fillText(s, x, y);
+        gc.setFont(new Font("Arial", 18));
+        gc.fillText(s, 80, y);
     }
+
+    // Helper method to draw centered text inside a square using JavaFX's Text class
+    private void drawCenteredText(String text, int x, int y) {
+        gc.setFill(Color.TOMATO);
+        gc.setFont(new Font("Arial Bold", 32));
+
+        // Use the Text class to calculate the width and height of the string
+        Text tempText = new Text(text);
+        tempText.setFont(new Font("Arial Bold", 32));
+
+        double textWidth = tempText.getLayoutBounds().getWidth();
+        double textHeight = tempText.getLayoutBounds().getHeight();
+
+        // Calculate the coordinates to center the text in the square
+        double centeredX = x + (KnightTourController.SIZE - textWidth) / 2;
+        double centeredY = y + (KnightTourController.SIZE + textHeight) / 2;
+
+        gc.fillText(text, centeredX, centeredY-4);
+    }
+
+
+
     //helper methods that handles all the text on screen
     private void drawTexts() {
-        gc.clearRect(80, NUM_ROWS*SIZE+10, 800, 200);
-        drawNumber("Moves solved: " + app.getMove(), 80, NUM_ROWS*SIZE+50, 18); // Larger font size for text
-        drawNumber("Total Number Attempted: " + app.getAttemptMove(), 80, NUM_ROWS*SIZE+80, 18); // Set font size to 18
+        gc.clearRect(70, NUM_ROWS*SIZE+20, 800, 200);
+        drawStat("Moves solved: " + app.getMove(), NUM_ROWS*SIZE+50); // Larger font size for text
+        drawStat("Total Number Attempted: " + app.getAttemptMove(), NUM_ROWS*SIZE+80); // Set font size to 18
     }
 
 
     //This draws on the canvas
     public void draw() {
+        final int X_OFFSET = 50;
+        final int Y_OFFSET = 10;
         Color color;
+        Color lightSquareColor = Color.BEIGE;  // Light square color
+        Color darkSquareColor = Color.SADDLEBROWN;  // Dark square color
+
         //draw the chess board
         for (int i = 0; i < NUM_ROWS; i++) {
             for (int j = 0; j < NUM_COLS; j++) {
@@ -155,10 +182,12 @@ public class KnightTourController {
                 else if (app.getNeighbor().contains(me)) { //draw the neighbors
                     color = Color.GREEN;
                 } else
-                    color = Color.BURLYWOOD;
-                drawSingleSquare(50+j*SIZE , 10+i*SIZE, color);
+                    color = ((i + j) % 2 == 0) ? lightSquareColor : darkSquareColor;
+
+                drawSingleSquare(X_OFFSET+j*SIZE , Y_OFFSET+i*SIZE, color);
                 if (value > 0){ //show the steps
-                    drawNumber(String.valueOf(value), 75+j*SIZE , 45+i*SIZE, 16);
+                    drawCenteredText(String.valueOf(value), X_OFFSET + j * SIZE, Y_OFFSET + i * SIZE);
+
                 }
             }
         }
